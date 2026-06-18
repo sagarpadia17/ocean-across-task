@@ -42,13 +42,15 @@ function App() {
       const route = getInitialRoute();
       setInitialRoute(route);
 
-      // Complete loading
-      setIsLoading(false);
+      // Complete loading after splash screen displays (2.5s)
+      const loadingTimer = setTimeout(() => {
+        setIsLoading(false);
+      }, 1500);
+
+      return () => clearTimeout(loadingTimer);
     };
 
-    // Add small delay to ensure all effects are processed
-    const timer = setTimeout(initializeApp, 100);
-    return () => clearTimeout(timer);
+    initializeApp();
   }, [restoreSession]);
 
   if (isLoading) {

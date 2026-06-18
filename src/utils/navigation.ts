@@ -4,7 +4,7 @@ import { sessionManager } from "./sessionManager";
 export const getInitialRoute = (): string => {
   // Check if user is logged in
   if (sessionManager.isLoggedIn()) {
-    return "/shop"; // Navigate to home/shop page
+    return "/store/shop"; // Navigate to home/shop page
   }
 
   // Check if onboarding has been completed
