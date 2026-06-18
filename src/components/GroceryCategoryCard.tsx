@@ -6,11 +6,12 @@ type Category = {
   borderColor?: string;
 };
 
-const GroceryCategoryCard = ({ category }: { category: Category }) => {
+const GroceryCategoryCard = ({ category, onClick }: { category: Category; onClick?: () => void }) => {
   return (
     <div
+      onClick={onClick}
       key={category.id}
-      className="flex flex-col items-center justify-center p-4 rounded-xl"
+      className="flex flex-col h-max items-center justify-center p-4 rounded-xl cursor-pointer hover:shadow-lg transition-shadow"
       style={{
         backgroundColor: category.bgColor,
         border: `1px solid ${category.borderColor}`,

@@ -6,9 +6,22 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-const OrderAcceptedDialog = () => {
+
+interface OrderAcceptedDialogProps {
+  open: boolean;
+  onClose: () => void;
+  onBackToHome: () => void;
+  onTrackOrder: () => void;
+}
+
+const OrderAcceptedDialog = ({
+  open,
+  onClose,
+  onBackToHome,
+  onTrackOrder,
+}: OrderAcceptedDialogProps) => {
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogClose />
@@ -16,7 +29,7 @@ const OrderAcceptedDialog = () => {
         <div className="flex flex-col items-center p-6 gap-12">
           <img
             src={OrderAcceptedImage}
-            alt="OrderAcceptedImage"
+            alt="Order Accepted"
             className="w-52 h-52 object-cover"
           />
           <div className="flex flex-col gap-4">
@@ -24,14 +37,20 @@ const OrderAcceptedDialog = () => {
               Your Order has been accepted
             </h4>
             <p className="text-base font-normal text-[#7C7C7C] text-center">
-              Your items has been placcd and is on it’s way to being processed
+              Your items have been placed and are on their way to being processed.
             </p>
           </div>
           <div className="flex flex-col gap-2 w-full">
-            <Button className="h-16 bg-[#53B175] w-full text-white text-lg font-semibold rounded-2xl ">
+            <Button
+              className="h-16 bg-[#53B175] w-full text-white text-lg font-semibold rounded-2xl"
+              onClick={onTrackOrder}
+            >
               Track Order
             </Button>
-            <Button className="h-8 bg-white w-full text-[#181725] text-lg font-semibold rounded-2xl ">
+            <Button
+              className="h-8 bg-white w-full text-[#181725] text-lg font-semibold rounded-2xl hover:bg-gray-50"
+              onClick={onBackToHome}
+            >
               Back to home
             </Button>
           </div>
@@ -40,4 +59,5 @@ const OrderAcceptedDialog = () => {
     </Dialog>
   );
 };
+
 export default OrderAcceptedDialog;

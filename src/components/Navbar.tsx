@@ -1,28 +1,43 @@
-import { Heart, ShoppingCart, Store, TextSearch, User } from "lucide-react";
+import { Heart, ShoppingCart, Store, LogOut, User } from "lucide-react";
 import NectarLogo from "@/assets/nectar-logo.svg";
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router";
+import { useCartStore } from "@/stores/cartStore";
+import { useAuth } from "@/hooks";
 
 const NavItem = ({
   icon,
   label,
   isActive,
+  badge,
 }: {
   icon: React.ReactNode;
   label: string;
   isActive: boolean;
+  badge?: number;
 }) => {
   return (
     <div
-      className={`w-full flex flex-col md:flex-row items-center justify-center md:gap-2 cursor-pointer ${isActive ? "md:border-b-2 md:border-white " : ""}`}
+      className={`w-full flex flex-col md:flex-row items-center justify-center md:gap-2 cursor-pointer relative ${
+        isActive ? "md:border-b-2 md:border-white " : ""
+      }`}
     >
       <div
-        className={`w-6 h-6 ${isActive ? "text-[#53B175] md:text-white " : "text-[#181725] md:text-white"}`}
+        className={`w-6 h-6 ${
+          isActive ? "text-[#53B175] md:text-white " : "text-[#181725] md:text-white"
+        }`}
       >
         {icon}
+        {badge !== undefined && badge > 0 && (
+          <span className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
+            {badge > 9 ? "9+" : badge}
+          </span>
+        )}
       </div>
       <span
-        className={`text-sm md:text-lg font-semibold ${isActive ? "text-[#53B175] md:text-white " : "text-[#181725] md:text-white"}`}
+        className={`text-sm md:text-lg font-semibold ${
+          isActive ? "text-[#53B175] md:text-white " : "text-[#181725] md:text-white"
+        }`}
       >
         {label}
       </span>
@@ -31,12 +46,39 @@ const NavItem = ({
 };
 
 const Navbar = () => {
-  const [activeTab, setActiveTab] = useState("Shop");
   const navigate = useNavigate();
-  const handleButtonClick = (nav: string) => {
-    setActiveTab(nav);
-    navigate(`/${nav === "Shop" ? "" : nav.toLowerCase()}`);
+  const location = useLocation();
+  const { logout } = useAuth();
+  const cartCount = useCartStore((state) =>
+    state.cartItems.reduce((total, item) => total + item.quantity, 0)
+  );
+  const [activeTab, setActiveTab] = useState("Shop");
+
+  // Update active tab based on current route
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes("/store/shop") || path === "/") {
+      setActiveTab("Shop");
+    } else if (path.includes("/store/explore")) {
+      setActiveTab("Explore");
+    } else if (path.includes("/store/cart")) {
+      setActiveTab("Cart");
+    } else if (path.includes("/store/favorites")) {
+      setActiveTab("Favorites");
+    } else if (path.includes("account")) {
+      setActiveTab("Account");
+    }
+  }, [location.pathname]);
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
   };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/signin", { replace: true });
+  };
+
   return (
     <nav
       className="
@@ -49,7 +91,8 @@ const Navbar = () => {
         <img
           src={NectarLogo}
           alt="Nectar Logo"
-          className="md:w-32 lg:w-48 hidden md:block"
+          onClick={() => handleNavigate("/store/shop")}
+          className="md:w-32 lg:w-48 hidden md:block cursor-pointer hover:opacity-80 transition"
         />
         <div
           className="
@@ -58,7 +101,7 @@ const Navbar = () => {
     "
         >
           <button
-            onClick={() => handleButtonClick("Shop")}
+            onClick={() => handleNavigate("/store/shop")}
             className="hover:opacity-80 transition"
           >
             <NavItem
@@ -68,27 +111,28 @@ const Navbar = () => {
             />
           </button>
           <button
-            onClick={() => handleButtonClick("Explore")}
+            onClick={() => handleNavigate("/store/explore")}
             className="hover:opacity-80 transition"
           >
             <NavItem
-              icon={<TextSearch />}
+              icon={<ShoppingCart />}
               label="Explore"
               isActive={activeTab === "Explore"}
             />
           </button>
           <button
-            onClick={() => handleButtonClick("Cart")}
+            onClick={() => handleNavigate("/store/cart")}
             className="hover:opacity-80 transition"
           >
             <NavItem
               icon={<ShoppingCart />}
               label="Cart"
               isActive={activeTab === "Cart"}
+              badge={cartCount}
             />
           </button>
           <button
-            onClick={() => handleButtonClick("Favorites")}
+            onClick={() => handleNavigate("/store/favorites")}
             className="hover:opacity-80 transition"
           >
             <NavItem
@@ -98,7 +142,7 @@ const Navbar = () => {
             />
           </button>
           <button
-            onClick={() => handleButtonClick("Account")}
+            onClick={() => handleNavigate("/account")}
             className="hover:opacity-80 transition"
           >
             <NavItem
@@ -108,9 +152,16 @@ const Navbar = () => {
             />
           </button>
         </div>
-        <div className="hidden md:block"></div>
+        <button
+          onClick={handleLogout}
+          className="hidden md:flex items-center gap-2 px-4 py-2 text-white hover:opacity-80 transition"
+        >
+          <LogOut size={20} />
+          <span className="text-sm font-semibold">Logout</span>
+        </button>
       </div>
     </nav>
   );
 };
+
 export default Navbar;

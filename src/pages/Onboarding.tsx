@@ -1,8 +1,14 @@
+import { sessionManager } from "@/hooks";
 import OnboardingImage from "@/assets/onboarding-image.svg";
 import Carrot from "@/assets/carrot.svg";
 import { Button } from "@/components/ui/button";
-
+import { useNavigate } from "react-router";
 const Onboarding = () => {
+  const navigate = useNavigate();
+  const handleGetStarted = () => {
+    sessionManager.completeOnboarding();
+    navigate("/signin", { replace: true });
+  };
   return (
     <div className=" flex h-screen items-center justify-center bg-[#53B175]">
       <div className="relative flex flex-col items-center justify-center gap-4 w-full lg:max-w-lg h-screen lg:max-h-[calc(100vh-64px)] lg:rounded-xl">
@@ -21,7 +27,10 @@ const Onboarding = () => {
               Get your groceries in as fast as one hour
             </p>
           </div>
-          <Button className="h-16 bg-[#53B175] w-full max-w-xs text-white text-lg font-semibold rounded-lg hover:bg-[#4cae5a] mb-12">
+          <Button
+            className="h-16 bg-[#53B175] w-full max-w-xs text-white text-lg font-semibold rounded-lg hover:bg-[#4cae5a] mb-12"
+            onClick={handleGetStarted}
+          >
             Get Started
           </Button>
         </div>

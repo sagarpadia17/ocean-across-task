@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { User } from "../types";
+import { sessionManager } from "../utils/sessionManager";
 
 interface UserState {
   user: User | null;
@@ -8,36 +9,54 @@ interface UserState {
   updateUser: (updates: Partial<User>) => void;
   logout: () => void;
   clearUser: () => void;
+  restoreSession: () => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
   user: null,
   isAuthenticated: false,
 
-  setUser: (user: User) =>
+  setUser: (user: User) => {
+    sessionManager.saveSession(user);
     set({
       user,
       isAuthenticated: true,
-    }),
+    });
+  },
 
   updateUser: (updates: Partial<User>) =>
-    set((state) =>
-      state.user
-        ? {
-            user: { ...state.user, ...updates },
-          }
-        : {}
-    ),
+    set((state) => {
+      if (state.user) {
+        const updatedUser = { ...state.user, ...updates };
+        sessionManager.saveSession(updatedUser);
+        return { user: updatedUser };
+      }
+      return {};
+    }),
 
-  logout: () =>
+  logout: () => {
+    sessionManager.clearSession();
     set({
       user: null,
       isAuthenticated: false,
-    }),
+    });
+  },
 
-  clearUser: () =>
+  clearUser: () => {
+    sessionManager.clearSession();
     set({
       user: null,
       isAuthenticated: false,
-    }),
+    });
+  },
+
+  restoreSession: () => {
+    const session = sessionManager.getSession();
+    if (session) {
+      set({
+        user: session,
+        isAuthenticated: true,
+      });
+    }
+  },
 }));
