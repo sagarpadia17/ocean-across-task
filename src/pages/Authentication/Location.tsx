@@ -37,20 +37,6 @@ const Location = () => {
     }
   };
 
-  const handleSkip = () => {
-    // If new user from signup, login before redirecting
-    if (isNewUser && email) {
-      const newUser = {
-        id: `user-${Date.now()}`,
-        email,
-        name: "User",
-      };
-      login(newUser);
-    }
-    // If existing user, already logged in, just redirect
-    navigate("/store/shop", { replace: true });
-  };
-
   const handleContinue = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);

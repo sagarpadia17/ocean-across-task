@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
-import { validatePhoneForm, generateOTP, storeOTP } from "@/hooks";
+import { generateOTP, storeOTP } from "@/hooks";
 import { FaChevronLeft } from "react-icons/fa";
 import IntlTelInput from "@intl-tel-input/react";
 import "intl-tel-input/styles";
@@ -18,7 +18,7 @@ const Number = () => {
 
     if (!isValidPhone) {
       setError("Please enter a valid phone number");
-      setIsLoading(false)
+      setIsLoading(false);
       return;
     }
 

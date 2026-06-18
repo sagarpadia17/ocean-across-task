@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useUserStore } from "../stores/userStore";
-import { sessionManager } from "../utils/sessionManager";
 import { getInitialRoute } from "../utils/navigation";
 
 interface AppWrapperProps {
